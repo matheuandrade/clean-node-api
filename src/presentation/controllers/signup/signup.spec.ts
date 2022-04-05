@@ -23,7 +23,9 @@ const makeAddAccount = (): AddAccount => {
     add (_account: AddAccountModel): AccountModel {
       return {
         id: 'valid-id',
-        ..._account
+        name: _account.name,
+        email: _account.email,
+        password: _account.password
       }
     }
   }
@@ -265,5 +267,28 @@ describe('SignUp Controller', () => {
 
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  test('Should return 200 if a valid data is provived', () => {
+    const { sut } = makeSut()
+
+    const httpRequest = {
+      body: {
+        name: 'name',
+        email: 'email@email.com',
+        password: 'password',
+        passwordConfirmation: 'password'
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      id: 'valid-id',
+      name: 'name',
+      email: 'email@email.com',
+      password: 'password'
+    })
   })
 })
